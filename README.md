@@ -1,1 +1,1 @@
-# QuadrupoleElectricField
+# ElectricField

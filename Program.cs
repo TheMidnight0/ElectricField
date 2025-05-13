@@ -1,4 +1,4 @@
-namespace QuadrupoleElectricField
+namespace ElectricField
 {
     internal static class Program
     {

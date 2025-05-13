@@ -1,17 +1,41 @@
-﻿using QuadrupoleElectricField.Properties;
+﻿using ElectricField.Properties;
 using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
-namespace QuadrupoleElectricField
+namespace ElectricField
 {
-    internal class Point : PictureBox
+    internal class EPoint : PictureBox
     {
-        internal static Point? lastChosen;
+        internal static EPoint? lastChosen;
+        internal int pointSize;
         bool drag;
 
-        public Point(int size) {
+        internal Point Center
+        {
+            get => new(Left + Width / 2, Top + Height / 2);
+        }
+
+        internal int PointSize
+        {
+            get => pointSize;
+            set
+            {
+                pointSize = value;
+                Left = Center.X - value / 2; Top = Center.Y - value / 2;
+                Width = value; Height = value;
+                GraphicsPath path = new();
+                path.AddEllipse(0, 0, Width, Height);
+                Region = new(path);
+            }
+        }
+
+        public EPoint(int size)
+        {
+            PointSize = size;
+            Left = 0; Top = 0;
             Image = Resources.Point;
             SizeMode = PictureBoxSizeMode.Zoom;
-            Width = size;
             MouseDown += OnMouseDown;
             MouseUp += OnMouseUp;
             MouseMove += OnMouseMove;
@@ -31,11 +55,11 @@ namespace QuadrupoleElectricField
         }
         void OnMouseMove(object? sender, MouseEventArgs e)
         {
-            if (drag == true)
+            if (drag == true && Parent != null)
             {
-                System.Drawing.Point newLocationOffset = e.Location - mouseOffset;
-                Left += newLocationOffset.X;
-                Top += newLocationOffset.Y;
+                Point newLocationOffset = e.Location - mouseOffset;
+                Left = (Left + newLocationOffset.X < 0 ? 0 : Left + newLocationOffset.X > Parent.Width - Width ? Parent.Width - Width : Left + newLocationOffset.X);
+                Top = (Top + newLocationOffset.Y < 0 ? 0 : Top + newLocationOffset.Y > Parent.Height - Height ? Parent.Height - Height : Top + newLocationOffset.Y);
             }
         }
     }
