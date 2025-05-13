@@ -29,44 +29,61 @@
         private void InitializeComponent()
         {
             field = new Panel();
-            DrawButton = new Button();
+            drawField = new Button();
             addPoint = new Button();
+            removePoint = new Button();
             SuspendLayout();
             // 
             // field
             // 
-            field.BackColor = SystemColors.ActiveBorder;
-            field.Location = new System.Drawing.Point(127, 32);
+            field.BackColor = SystemColors.ButtonHighlight;
+            field.BorderStyle = BorderStyle.Fixed3D;
+            field.Location = new System.Drawing.Point(32, 12);
             field.Name = "field";
-            field.Size = new Size(264, 221);
+            field.Size = new Size(408, 221);
             field.TabIndex = 0;
             // 
-            // DrawButton
+            // drawField
             // 
-            DrawButton.FlatStyle = FlatStyle.Flat;
-            DrawButton.Location = new System.Drawing.Point(218, 302);
-            DrawButton.Name = "DrawButton";
-            DrawButton.Size = new Size(94, 29);
-            DrawButton.TabIndex = 1;
-            DrawButton.Text = "Рисовать";
-            DrawButton.UseVisualStyleBackColor = true;
+            drawField.FlatStyle = FlatStyle.Flat;
+            drawField.Location = new System.Drawing.Point(159, 271);
+            drawField.Name = "drawField";
+            drawField.Size = new Size(147, 55);
+            drawField.TabIndex = 1;
+            drawField.Text = "Рисовать";
+            drawField.UseVisualStyleBackColor = true;
             // 
             // addPoint
             // 
-            addPoint.Location = new System.Drawing.Point(368, 297);
+            addPoint.FlatStyle = FlatStyle.Flat;
+            addPoint.Location = new System.Drawing.Point(312, 271);
             addPoint.Name = "addPoint";
-            addPoint.Size = new Size(94, 29);
+            addPoint.Size = new Size(128, 55);
             addPoint.TabIndex = 2;
             addPoint.Text = "Добавить";
             addPoint.UseVisualStyleBackColor = true;
+            addPoint.Click += AddPoint_Click;
+            // 
+            // removePoint
+            // 
+            removePoint.FlatStyle = FlatStyle.Flat;
+            removePoint.Location = new System.Drawing.Point(32, 271);
+            removePoint.Name = "removePoint";
+            removePoint.Size = new Size(121, 55);
+            removePoint.TabIndex = 3;
+            removePoint.Text = "Удалить";
+            removePoint.UseVisualStyleBackColor = true;
+            removePoint.Click += RemovePoint_Click;
             // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = SystemColors.ControlLight;
             ClientSize = new Size(900, 450);
+            Controls.Add(removePoint);
             Controls.Add(addPoint);
-            Controls.Add(DrawButton);
+            Controls.Add(drawField);
             Controls.Add(field);
             Font = new Font("Comic Sans MS", 9F);
             Name = "Main";
@@ -77,7 +94,8 @@
         #endregion
 
         private Panel field;
-        private Button DrawButton;
+        private Button drawField;
         private Button addPoint;
+        private Button removePoint;
     }
 }

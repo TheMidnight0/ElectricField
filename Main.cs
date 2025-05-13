@@ -4,35 +4,23 @@ namespace QuadrupoleElectricField
 {
     public partial class Main : Form
     {
+        List<Point> points = [];
+        int pointSize = 50;
+
         public Main()
         {
             InitializeComponent();
-            
+
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-
-            if (startDistance > 0 && step > 0)
-            {
-                DrawFieldLines(e.Graphics);
-            }
         }
 
         private void DrawFieldLines(Graphics g)
         {
             Pen pen = new Pen(Color.Blue);
-
-            for (double x = startDistance; x <= ClientSize.Width; x += step)
-            {
-                for (double y = startDistance; y <= ClientSize.Height; y += step)
-                {
-                    double fieldStrength = CalculateFieldStrength(x, y);
-
-                    DrawLine(g, x, y, fieldStrength);
-                }
-            }
         }
 
         private double CalculateFieldStrength(double x, double y)
@@ -51,6 +39,23 @@ namespace QuadrupoleElectricField
             float endY = (float)(y + fieldStrength * lengthFactor);
 
             g.DrawLine(Pens.Blue, (float)x, (float)y, endX, endY);
+        }
+
+        private void AddPoint_Click(object sender, EventArgs e)
+        {
+            Point p = new(pointSize);
+            points.Add(p);
+            field.Controls.Add(p);
+        }
+
+        private void RemovePoint_Click(object sender, EventArgs e)
+        {
+            if (Point.lastChosen != null)
+            {
+                field.Controls.Remove(Point.lastChosen);
+                points.Remove(Point.lastChosen);
+                Point.lastChosen = null;
+            }
         }
     }
 }
