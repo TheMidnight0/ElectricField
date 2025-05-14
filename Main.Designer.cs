@@ -30,7 +30,7 @@
         {
             field = new Panel();
             drawButton = new Button();
-            addPoint = new Button();
+            addPositive = new Button();
             removePoint = new Button();
             pointSizeLabel = new Label();
             pointSizeBar = new TrackBar();
@@ -42,6 +42,8 @@
             stepLengthBar = new TrackBar();
             stepLengthLabel = new Label();
             drawingStyle = new CheckBox();
+            label1 = new Label();
+            addNegative = new Button();
             ((System.ComponentModel.ISupportInitialize)pointSizeBar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)linesCountBar).BeginInit();
             ((System.ComponentModel.ISupportInitialize)stepLengthBar).BeginInit();
@@ -69,17 +71,17 @@
             drawButton.UseVisualStyleBackColor = true;
             drawButton.Click += DrawButton_Click;
             // 
-            // addPoint
+            // addPositive
             // 
-            addPoint.FlatStyle = FlatStyle.Flat;
-            addPoint.Font = new Font("Comic Sans MS", 16F);
-            addPoint.Location = new Point(751, 388);
-            addPoint.Name = "addPoint";
-            addPoint.Size = new Size(200, 55);
-            addPoint.TabIndex = 2;
-            addPoint.Text = "Добавить";
-            addPoint.UseVisualStyleBackColor = true;
-            addPoint.Click += AddPoint_Click;
+            addPositive.FlatStyle = FlatStyle.Flat;
+            addPositive.Font = new Font("Comic Sans MS", 20F);
+            addPositive.Location = new Point(751, 388);
+            addPositive.Name = "addPositive";
+            addPositive.Size = new Size(100, 55);
+            addPositive.TabIndex = 2;
+            addPositive.Text = "+";
+            addPositive.UseVisualStyleBackColor = true;
+            addPositive.Click += AddPositive_Click;
             // 
             // removePoint
             // 
@@ -170,7 +172,7 @@
             // stepLengthBar
             // 
             stepLengthBar.Location = new Point(12, 241);
-            stepLengthBar.Maximum = 100;
+            stepLengthBar.Maximum = 300;
             stepLengthBar.Minimum = 10;
             stepLengthBar.Name = "stepLengthBar";
             stepLengthBar.Size = new Size(231, 56);
@@ -201,12 +203,36 @@
             drawingStyle.UseVisualStyleBackColor = true;
             drawingStyle.CheckedChanged += DrawingStyle_CheckedChanged;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Comic Sans MS", 16F);
+            label1.Location = new Point(780, 446);
+            label1.Name = "label1";
+            label1.Size = new Size(139, 38);
+            label1.TabIndex = 14;
+            label1.Text = "Добавить";
+            // 
+            // addNegative
+            // 
+            addNegative.FlatStyle = FlatStyle.Flat;
+            addNegative.Font = new Font("Comic Sans MS", 16F);
+            addNegative.Location = new Point(857, 388);
+            addNegative.Name = "addNegative";
+            addNegative.Size = new Size(94, 55);
+            addNegative.TabIndex = 15;
+            addNegative.Text = "-";
+            addNegative.UseVisualStyleBackColor = true;
+            addNegative.Click += AddNegative_Click;
+            // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(9F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ControlLight;
-            ClientSize = new Size(972, 456);
+            ClientSize = new Size(972, 487);
+            Controls.Add(addNegative);
+            Controls.Add(label1);
             Controls.Add(drawingStyle);
             Controls.Add(stepLengthBox);
             Controls.Add(stepLengthBar);
@@ -218,7 +244,7 @@
             Controls.Add(pointSizeBar);
             Controls.Add(pointSizeLabel);
             Controls.Add(removePoint);
-            Controls.Add(addPoint);
+            Controls.Add(addPositive);
             Controls.Add(drawButton);
             Controls.Add(field);
             DoubleBuffered = true;
@@ -238,7 +264,7 @@
 
         private Panel field;
         private Button drawButton;
-        private Button addPoint;
+        private Button addPositive;
         private Button removePoint;
         private Label pointSizeLabel;
         private TrackBar pointSizeBar;
@@ -250,5 +276,7 @@
         private TrackBar stepLengthBar;
         private Label stepLengthLabel;
         private CheckBox drawingStyle;
+        private Label label1;
+        private Button addNegative;
     }
 }

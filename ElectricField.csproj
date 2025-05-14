@@ -9,11 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Images\Point.png" />
+    <None Remove="Images\Negative.png" />
+    <None Remove="Images\Positive.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Images\Point.png" />
+    <EmbeddedResource Include="Images\Negative.png" />
+    <EmbeddedResource Include="Images\Positive.png" />
   </ItemGroup>
 
   <ItemGroup>

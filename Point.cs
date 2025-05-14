@@ -2,12 +2,14 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace ElectricField
 {
     internal class EPoint : PictureBox
     {
         internal static EPoint? lastChosen;
+        internal int Sign { get; set; }
         internal int pointSize;
         bool drag;
 
@@ -30,15 +32,17 @@ namespace ElectricField
             }
         }
 
-        public EPoint(int size)
+        public EPoint(int size, int sign)
         {
+            Sign = sign;
             PointSize = size;
             Left = 0; Top = 0;
-            Image = Resources.Point;
+            Image = Sign < 0 ? Resources.Negative : Resources.Positive;
             SizeMode = PictureBoxSizeMode.Zoom;
             MouseDown += OnMouseDown;
             MouseUp += OnMouseUp;
             MouseMove += OnMouseMove;
+            Sign = sign;
         }
 
         private static Size mouseOffset;
@@ -47,6 +51,7 @@ namespace ElectricField
         {
             mouseOffset = new Size(e.Location);
             drag = true;
+            BringToFront();
         }
         void OnMouseUp(object? sender, MouseEventArgs e)
         {
@@ -57,9 +62,13 @@ namespace ElectricField
         {
             if (drag == true && Parent != null)
             {
+                Parent.Invalidate(Bounds, true);
                 Point newLocationOffset = e.Location - mouseOffset;
                 Left = (Left + newLocationOffset.X < 0 ? 0 : Left + newLocationOffset.X > Parent.Width - Width ? Parent.Width - Width : Left + newLocationOffset.X);
                 Top = (Top + newLocationOffset.Y < 0 ? 0 : Top + newLocationOffset.Y > Parent.Height - Height ? Parent.Height - Height : Top + newLocationOffset.Y);
+                UpdateBounds();
+                Parent.Invalidate(Bounds, true);
+                Parent.Update();
             }
         }
     }

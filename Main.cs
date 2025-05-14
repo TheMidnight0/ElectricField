@@ -12,6 +12,9 @@ namespace ElectricField
         {
             InitializeComponent();
             drawning = new(field.Width, field.Height);
+            SetStyle(ControlStyles.AllPaintingInWmPaint |
+              ControlStyles.UserPaint |
+              ControlStyles.DoubleBuffer, true);
             field.Paint += Field_Paint;
         }
 
@@ -19,8 +22,7 @@ namespace ElectricField
         {
             if (drawEField == 1)
             {
-                drawning = new(field.Width, field.Height);
-                DrawElectricField(Graphics.FromImage(drawning));
+                DrawElectricField();
                 e.Graphics.DrawImage(drawning, Point.Empty);
                 drawEField = 0;
             }
@@ -28,24 +30,21 @@ namespace ElectricField
             {
                 if (drawingStyle.Checked)
                 {
-                    field.Refresh();
                     drawEField = 1;
                 }
                 else
                 {
-                    field.Invalidate();
                     drawEField = -1;
                 }
-            }
-            if (drawEField == -1)
-            {
-                field.Refresh();
+                field.Invalidate();
             }
         }
 
-        private void DrawElectricField(Graphics g)
+        private void DrawElectricField()
         {
-            int lineLength = 1000;
+            drawning = new Bitmap(field.Width, field.Height);
+            Graphics g = Graphics.FromImage(drawning);
+            int lineLength = 1100;
             int steps = (int)(lineLength / stepLength);
             const double k = 9e9;
 
@@ -53,9 +52,9 @@ namespace ElectricField
             {
                 for (int i = 0; i < linesCount; i++)
                 {
-                    // Начинаем линию чуть вокруг заряда, равномерно распределяя по окружности
+                    // Начинаем линию вокруг заряда, равномерно распределяя по окружности
                     double angle = 2 * Math.PI * i / linesCount;
-                    double startX = charge.Center.X + Math.Cos(angle) * pointSizeBar.Value / 2; // Смещаем от центра
+                    double startX = charge.Center.X + Math.Cos(angle) * pointSizeBar.Value / 2; // Смещаем от центра на радиус точки
                     double startY = charge.Center.Y + Math.Sin(angle) * pointSizeBar.Value / 2;
 
                     PointF currentPoint = new((float)startX, (float)startY);
@@ -71,19 +70,24 @@ namespace ElectricField
                             double dx = currentPoint.X - c.Center.X;
                             double dy = currentPoint.Y - c.Center.Y;
                             double rSquared = dx * dx + dy * dy;
-
-                            if (rSquared < 1e-4) continue; // избегаем деления на ноль
-
                             double r = Math.Sqrt(rSquared);
-                            double E_magnitude = k / rSquared;
 
+                            // Если точка слишком близко к отрицательному заряду - заканчиваем прерываем цикл
+                            if (r < pointSizeBar.Value / 2 && c.Sign == -1) 
+                            {
+                                stepIndex = steps;
+                                break;
+                            }
+
+                            double E_magnitude = k * c.Sign / rSquared;
                             Ex += E_magnitude * dx / r;
                             Ey += E_magnitude * dy / r;
                         }
+                        if (stepIndex == steps) break;
 
-                        // Нормализуем вектор поля для получения направления
+                        // Нормализуем вектор поля
                         double E_norm = Math.Sqrt(Ex * Ex + Ey * Ey);
-                        if (E_norm == 0) break; // если поле нулевое — прерываем
+                        if (E_norm < 1e-4) break;
 
                         double dirX = Ex / E_norm;
                         double dirY = Ey / E_norm;
@@ -92,22 +96,30 @@ namespace ElectricField
                         float nextX = (float)(currentPoint.X + dirX * stepLength);
                         float nextY = (float)(currentPoint.Y + dirY * stepLength);
 
-                        // Рисуем линию сегмента
-                        g.DrawLine(Pens.Black, currentPoint.X, currentPoint.Y, nextX, nextY);
+                        // Рисуем сегмент линии
+                        g.DrawLine(Pens.Blue, currentPoint.X, currentPoint.Y, nextX, nextY);
                         currentPoint.X = nextX;
                         currentPoint.Y = nextY;
-
-                        if (nextX < 0 || nextY < 0 || nextX > field.Width || nextY > field.Height) break;
                     }
                 }
             }
         }
 
-        private void AddPoint_Click(object sender, EventArgs e)
+        private void AddPositive_Click(object sender, EventArgs e)
         {
-            EPoint p = new(pointSizeBar.Value);
+            EPoint p = new(pointSizeBar.Value, 1);
             points.Add(p);
             field.Controls.Add(p);
+            p.BringToFront();
+            field.Invalidate();
+        }
+
+        private void AddNegative_Click(object sender, EventArgs e)
+        {
+            EPoint p = new(pointSizeBar.Value, -1);
+            points.Add(p);
+            field.Controls.Add(p);
+            p.BringToFront();
             field.Invalidate();
         }
 
@@ -192,7 +204,8 @@ namespace ElectricField
                 drawButton.Enabled = false;
                 drawEField = 1;
                 field.Invalidate();
-            } else
+            }
+            else
             {
                 drawButton.Enabled = true;
             }
