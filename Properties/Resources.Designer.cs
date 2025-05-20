@@ -63,6 +63,26 @@ namespace ElectricField.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Elecrtic_Field {
+            get {
+                object obj = ResourceManager.GetObject("Elecrtic_Field", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Equipotential_Field {
+            get {
+                object obj = ResourceManager.GetObject("Equipotential_Field", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Negative {
             get {
                 object obj = ResourceManager.GetObject("Negative", resourceCulture);

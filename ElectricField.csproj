@@ -9,11 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\Elecrtic Field.png" />
+    <None Remove="Images\Equipotential Field.png" />
     <None Remove="Images\Negative.png" />
     <None Remove="Images\Positive.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Images\Elecrtic Field.png" />
+    <EmbeddedResource Include="Images\Equipotential Field.png" />
     <EmbeddedResource Include="Images\Negative.png" />
     <EmbeddedResource Include="Images\Positive.png" />
   </ItemGroup>
