@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace ElectricField
@@ -15,7 +16,6 @@ namespace ElectricField
         int fieldCols = 50;
         int fieldRows = 50;
         float density = 0.001f;
-
 
         public Main()
         {
@@ -49,64 +49,7 @@ namespace ElectricField
             field.Update();
         }
 
-        public void DrawEquipotentialField()
-        {
-            int pointSize = 30;
-            pointSize = pointSizeBar.Value;
-            if (points.Count == 0) return;
-
-            Graphics g = Graphics.FromImage(EqPField);
-            g.Clear(Color.Transparent);
-
-            float rectWidth = EqPField.Width / fieldCols;
-            float rectHeight = EqPField.Height / fieldRows;
-            int potentialCount = (int)(4 / density / pointSize);
-
-            for (int e = 0; e < potentialCount; e++)
-            {
-                float targetPotential = e * density;
-                for (int x = 0; x < fieldCols + 1; x++)
-                {
-                    for (int y = 0; y < fieldRows + 2; y++)
-                    {
-                        PointF[] vertics =
-                        [
-                            new PointF(rectWidth * x, rectHeight * y),
-                            new PointF(rectWidth * (x+1), rectHeight * y),
-                            new PointF(rectWidth * (x+1), rectHeight * (y+1)),
-                            new PointF(rectWidth * x, rectHeight * (y+1)),
-                        ];
-                        double[] potentials =
-                        [
-                            GetPotential(vertics[0]),
-                            GetPotential(vertics[1]),
-                            GetPotential(vertics[2]),
-                            GetPotential(vertics[3])
-                        ];
-                        PointF? first = null;
-                        PointF? second = null;
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if ((potentials[i] > targetPotential && potentials[(i + 1) % 4] < targetPotential) || (potentials[i] < targetPotential && potentials[(i + 1) % 4] > targetPotential))
-                            {
-                                if (first == null) first = Interpolate(vertics[i], vertics[(i + 1) % 4], targetPotential);
-                                else
-                                {
-                                    second = Interpolate(vertics[i], vertics[(i + 1) % 4], targetPotential);
-                                    break;
-                                }
-                            }
-                        }
-                        if (first != null && second != null)
-                        {
-                            g.DrawLine(Pens.Red, (PointF)first, (PointF)second);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void DrawElectricField()
+        private void DrawElectricField(bool realTimeDrawning = false)
         {
             List<EPoint> saved_points = points;
             Graphics g = Graphics.FromImage(EField);
@@ -168,7 +111,64 @@ namespace ElectricField
                         currentPoint.X = nextX;
                         currentPoint.Y = nextY;
                     }
+                    if (realTimeDrawning) field.Invalidate();
                 }
+            }
+        }
+
+        public void DrawEquipotentialField(bool realTimeDrawning = false)
+        {
+            if (points.Count == 0) return;
+
+            Graphics g = Graphics.FromImage(EqPField);
+            g.Clear(Color.Transparent);
+
+            float rectWidth = EqPField.Width / (float)fieldCols;
+            float rectHeight = EqPField.Height / (float)fieldRows;
+            int potentialCount = (int)(4 / density / pointSizeBar.Value);
+
+            for (int e = 0; e < potentialCount; e++)
+            {
+                float targetPotential = e * density;
+                for (int x = 0; x < fieldCols; x++)
+                {
+                    for (int y = 0; y < fieldRows; y++)
+                    {
+                        PointF[] vertics =
+                        [
+                            new PointF(rectWidth * x, rectHeight * y),
+                            new PointF(rectWidth * (x+1), rectHeight * y),
+                            new PointF(rectWidth * (x+1), rectHeight * (y+1)),
+                            new PointF(rectWidth * x, rectHeight * (y+1)),
+                        ];
+                        double[] potentials =
+                        [
+                            GetPotential(vertics[0]),
+                            GetPotential(vertics[1]),
+                            GetPotential(vertics[2]),
+                            GetPotential(vertics[3])
+                        ];
+                        PointF? first = null;
+                        PointF? second = null;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            if ((potentials[i] > targetPotential && potentials[(i + 1) % 4] < targetPotential) || (potentials[i] < targetPotential && potentials[(i + 1) % 4] > targetPotential))
+                            {
+                                if (first == null) first = Interpolate(vertics[i], vertics[(i + 1) % 4], targetPotential);
+                                else
+                                {
+                                    second = Interpolate(vertics[i], vertics[(i + 1) % 4], targetPotential);
+                                    break;
+                                }
+                            }
+                        }
+                        if (first != null && second != null)
+                        {
+                            g.DrawLine(Pens.Red, (PointF)first, (PointF)second);
+                        }
+                    }
+                }
+                if (realTimeDrawning) field.Invalidate();
             }
         }
 
@@ -260,7 +260,6 @@ namespace ElectricField
         {
             linesCountBox.Text = linesCountBar.Value.ToString();
             linesCount = linesCountBar.Value;
-            field.Invalidate();
         }
 
         private void LinesCountBox_TextChanged(object sender, EventArgs e)
@@ -269,7 +268,6 @@ namespace ElectricField
             {
                 linesCountBar.Value = int.Parse(linesCountBox.Text);
                 linesCount = linesCountBar.Value;
-                field.Invalidate();
             }
             catch { }
         }
@@ -278,7 +276,6 @@ namespace ElectricField
         {
             stepLengthBox.Text = (stepLengthBar.Value / 10.0).ToString();
             stepLength = stepLengthBar.Value / 10.0;
-            field.Invalidate();
         }
 
         private void StepLengthBox_TextChanged(object sender, EventArgs e)
@@ -287,7 +284,6 @@ namespace ElectricField
             {
                 stepLengthBar.Value = (int)(double.Parse(stepLengthBox.Text) * 10);
                 stepLength = stepLengthBar.Value / 10.0;
-                field.Invalidate();
             }
             catch { }
         }
@@ -296,33 +292,52 @@ namespace ElectricField
         {
             if (drawingStyleCheck.Checked)
             {
-                updateField.Start();
                 drawEFieldButton.Enabled = false;
+                drawEqPFieldButton.Enabled = false;
+                EFieldCheck.Visible = true;
+                EFieldCheck.Enabled = true;
+                EqPFieldCheck.Visible = true;
+                EqPFieldCheck.Enabled = true;
+                clearFieldButton.Enabled = false;
+                updateField.Start();
             }
             else
             {
-                updateField.Stop();
                 drawEFieldButton.Enabled = true;
+                drawEqPFieldButton.Enabled = true;
+                EFieldCheck.Visible = false;
+                EFieldCheck.Enabled = false;
+                EqPFieldCheck.Visible = false;
+                EqPFieldCheck.Enabled = false;
+                clearFieldButton.Enabled = true;
+                updateField.Stop();
             }
         }
 
-        private void DrawEFieldButton_Click(object sender, EventArgs e)
+        private async void DrawEFieldButton_Click(object sender, EventArgs e)
         {
-            DrawElectricField();
+            drawEFieldButton.Enabled = false;
+            EPoint.LockPoints = true;
+            await Task.Run(() => DrawElectricField(true));
             field.Refresh();
+            EPoint.LockPoints = false;
+            drawEFieldButton.Enabled = true;
         }
 
-        private void DrawEqPFieldButton_Click(object sender, EventArgs e)
+        private async void DrawEqPFieldButton_Click(object sender, EventArgs e)
         {
-            DrawEquipotentialField();
+            drawEqPFieldButton.Enabled = false;
+            EPoint.LockPoints = true;
+            await Task.Run(() => DrawEquipotentialField(true));
             field.Refresh();
+            EPoint.LockPoints = false;
+            drawEqPFieldButton.Enabled = true;
         }
 
         private void FieldColsBar_Scroll(object sender, EventArgs e)
         {
             fieldColsBox.Text = fieldColsBar.Value.ToString();
             fieldCols = fieldColsBar.Value;
-            field.Invalidate();
         }
 
         private void FieldColsBox_TextChanged(object sender, EventArgs e)
@@ -331,7 +346,6 @@ namespace ElectricField
             {
                 fieldColsBar.Value = int.Parse(fieldColsBox.Text);
                 fieldCols = fieldColsBar.Value;
-                field.Invalidate();
             }
             catch { }
         }
@@ -340,7 +354,6 @@ namespace ElectricField
         {
             fieldRowsBox.Text = fieldRowsBar.Value.ToString();
             fieldRows = fieldRowsBar.Value;
-            field.Invalidate();
         }
 
         private void FieldRowsBox_TextChanged(object sender, EventArgs e)
@@ -349,7 +362,6 @@ namespace ElectricField
             {
                 fieldRowsBar.Value = int.Parse(fieldRowsBox.Text);
                 fieldRows = fieldRowsBar.Value;
-                field.Invalidate();
             }
             catch { }
         }
@@ -358,7 +370,6 @@ namespace ElectricField
         {
             densityBox.Text = (densityBar.Value / 10000f).ToString();
             density = densityBar.Value / 10000f;
-            field.Invalidate();
         }
 
         private void DensityBox_TextChanged(object sender, EventArgs e)
@@ -367,7 +378,6 @@ namespace ElectricField
             {
                 densityBar.Value = (int)(float.Parse(densityBox.Text) * 10000);
                 density = densityBar.Value / 10000f;
-                field.Invalidate();
             }
             catch { }
         }

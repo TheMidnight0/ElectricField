@@ -218,9 +218,9 @@
             drawingStyleCheck.Font = new Font("Comic Sans MS", 13F);
             drawingStyleCheck.Location = new Point(22, 392);
             drawingStyleCheck.Name = "drawingStyleCheck";
-            drawingStyleCheck.Size = new Size(301, 34);
+            drawingStyleCheck.Size = new Size(241, 34);
             drawingStyleCheck.TabIndex = 13;
-            drawingStyleCheck.Text = "Рисовать по обновлению";
+            drawingStyleCheck.Text = "Рисовать регулярно";
             drawingStyleCheck.UseVisualStyleBackColor = true;
             drawingStyleCheck.CheckedChanged += DrawingStyle_CheckedChanged;
             // 
@@ -262,7 +262,7 @@
             // 
             // updateField
             // 
-            updateField.Interval = 500;
+            updateField.Interval = 1000;
             updateField.Tick += UpdateField_Tick;
             // 
             // EFieldCheck
@@ -270,24 +270,28 @@
             EFieldCheck.AutoSize = true;
             EFieldCheck.Checked = true;
             EFieldCheck.CheckState = CheckState.Checked;
+            EFieldCheck.Enabled = false;
             EFieldCheck.Location = new Point(22, 430);
             EFieldCheck.Name = "EFieldCheck";
             EFieldCheck.Size = new Size(180, 24);
             EFieldCheck.TabIndex = 18;
             EFieldCheck.Text = "Электрическое поле";
             EFieldCheck.UseVisualStyleBackColor = true;
+            EFieldCheck.Visible = false;
             // 
             // EqPFieldCheck
             // 
             EqPFieldCheck.AutoSize = true;
             EqPFieldCheck.Checked = true;
             EqPFieldCheck.CheckState = CheckState.Checked;
+            EqPFieldCheck.Enabled = false;
             EqPFieldCheck.Location = new Point(22, 460);
             EqPFieldCheck.Name = "EqPFieldCheck";
             EqPFieldCheck.Size = new Size(206, 24);
             EqPFieldCheck.TabIndex = 19;
             EqPFieldCheck.Text = "Поле эквипотенциалей";
             EqPFieldCheck.UseVisualStyleBackColor = true;
+            EqPFieldCheck.Visible = false;
             // 
             // label2
             // 

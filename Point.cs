@@ -9,6 +9,7 @@ namespace ElectricField
     internal class EPoint : PictureBox
     {
         internal static EPoint? lastChosen;
+        internal static bool LockPoints = false;
         internal int Sign { get; set; }
         internal int pointSize;
         bool drag;
@@ -49,9 +50,12 @@ namespace ElectricField
 
         void OnMouseDown(object? sender, MouseEventArgs e)
         {
-            mouseOffset = new Size(e.Location);
-            drag = true;
-            BringToFront();
+            if (!LockPoints)
+            {
+                mouseOffset = new Size(e.Location);
+                drag = true;
+                BringToFront();
+            }
         }
         void OnMouseUp(object? sender, MouseEventArgs e)
         {
@@ -60,7 +64,7 @@ namespace ElectricField
         }
         void OnMouseMove(object? sender, MouseEventArgs e)
         {
-            if (drag == true && Parent != null)
+            if (drag == true && Parent != null && !LockPoints)
             {
                 Parent.Invalidate(Bounds, true);
                 Point newLocationOffset = e.Location - mouseOffset;
